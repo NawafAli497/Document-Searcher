@@ -1,4 +1,4 @@
-package test33;
+
 
 public class Node<T> {
 	public T data;

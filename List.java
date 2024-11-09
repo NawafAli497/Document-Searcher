@@ -1,4 +1,4 @@
-package test33;
+
 
 public interface List<T> {
     public void findFirst( );
@@ -7,7 +7,7 @@ public interface List<T> {
     public void update(T e);
     public void insert(T e);
     public void remove( );
-    public boolean full( );
-    public boolean empty( );
     public boolean last( );
+    public void findIndex(int i);
+    public int length();
 }
