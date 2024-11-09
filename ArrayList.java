@@ -36,12 +36,9 @@ public class ArrayList<T> implements List<T> {
 			System.arraycopy(nodes, 0, tmp, 0, size);
 			nodes = tmp;
 		}
-		else {
 			for (int i = size - 1; i > current; --i) {
 				nodes[i + 1] = nodes[i];
 			}
-		}
-
 		current++;
 		nodes[current] = val;
 		size++;
