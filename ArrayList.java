@@ -30,7 +30,7 @@ public class ArrayList<T> implements List<T> {
 		nodes[current] = val;
 	}
 
-	public void insert(T val) { //dynamic resizing array O(1) amortized check (https://sassafras13.github.io/DynamicResizeLists/) for more info
+	public void insert(T val) { //dynamic resizing array O(n), the resizing won't effect the efficiency that much (https://sassafras13.github.io/DynamicResizeLists/) for more info
 		if (size == nodes.length) {
 			T[] tmp = (T[]) new Object[2*nodes.length];
 			System.arraycopy(nodes, 0, tmp, 0, size);
