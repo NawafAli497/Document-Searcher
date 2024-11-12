@@ -1,4 +1,4 @@
-package test33;
+
 
 public class BST<T> {
     BSTNode<T> root, current;
@@ -13,8 +13,8 @@ public class BST<T> {
 	public boolean full() {
 		return false;
 	}
-	public int retrieve () {
-		return current.data.retrieve();
+	public LinkedList<Integer> retrieve () {
+		return current.data;
 	}
     public boolean update(String key, int data){
 		remove_key(current.key);
