@@ -83,13 +83,10 @@ public class dataReader {
 		return tmp;
 		
 	}
- public static LinkedPQ<Integer> ranking(String s1) {
-	 //1- navigate 						done
-	 //2- term frequency 				done
-	 //3- for all 						done
-	 //4- order the doc (priority queue)done
-	 //5- multiple words				done
-	 //6- corner cases
+	
+	//this method returns a Linked priority queue 
+	 // the data is the Documents ID and the priority is the number of times that each word is in the Document(this only takes one word)
+ public static LinkedPQ<Integer> rankingDoc(String s1) {
 	 
 	 Relative root= Relative.Root;
 	 
@@ -117,14 +114,12 @@ public class dataReader {
 	 	
 
 	return rankedDoc; 
- }
- public static LinkedPQ<Integer> ranking(LinkedList<String> words) {
-	 //1- navigate 						done
-	 //2- term frequency 				done
-	 //3- for all 						done
-	 //4- order the doc (priority queue)done
-	 //5- multiple words				done
-	 //6- corner cases
+ }	
+ 
+ //this method returns a Linked priority queue 
+ // the data is the Documents ID and the priority is the number of times that each word is in the Document
+ public static LinkedPQ<Integer> rankingDoc(LinkedList<String> words) {
+	 
 	 
 	 LinkedPQ<Integer> rankedDoc=new LinkedPQ<Integer>();
 	 
@@ -149,7 +144,7 @@ public class dataReader {
 	
 	return rankedDoc; 
  }
- 
+ //count the number of times that a word is in the Document
  public static int termFrequency(String s1,LinkedList<String> theDoc) {
 	 int count=0;
 	 theDoc.findFirst();
@@ -168,7 +163,8 @@ public class dataReader {
  
  }
  
-     
+     // this is a method that asks the user to input words to search in this search engine and retrun a linked list of words 
+ 	 //without spaces and without "AND" or"OR"
      public static LinkedList<String> getSearchWords() {
          Scanner scanner = new Scanner(System.in);
          System.out.println("Enter your search query (use 'AND' or 'OR' between words): ");
@@ -177,23 +173,24 @@ public class dataReader {
          LinkedList<String> wordsList = new LinkedList<>();
          
          // Split the input by spaces
-         String[] words = input.split(" ");
+         String[] words = input.split("\\s");
          
-         // Using a regular for loop instead of an enhanced for loop
+         
          for (int i = 0; i < words.length; i++) {
              String word = words[i];
-             // Ignore "AND" and "OR" and empty strings
-             if (!word.equalsIgnoreCase("AND") && !word.equalsIgnoreCase("OR") && !word.trim().isEmpty()) {
-                 wordsList.insert(word.trim());
-             }
+            
+                wordsList.insert(word);
+             
          }
          
          scanner.close();
          return wordsList;
      }
      
-     public static void rankingall() {
-    	 ArrayList<PQElement<Integer>> elements = ranking(getSearchWords()).getAllElements();
+     //this is the Document ranking 
+     public static void ranking() {
+    	 
+    	 ArrayList<PQElement<Integer>> elements = rankingDoc(getSearchWords()).getAllElements();
     	 System.out.println("DocID\tScore");
     	 for (int i = 0; i < elements.length(); i++) {
 			elements.findIndex(i);
