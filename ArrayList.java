@@ -5,10 +5,11 @@ public class ArrayList<T> implements List<T> {
 	private int current;
 	private T[] nodes;
 
-	public ArrayList() {
+	public ArrayList(int maxsize) {
+		this.maxsize = maxsize;
 		size = 0;
 		current = -1;
-		nodes = (T[]) new Object[1];
+		nodes = (T[]) new Object[maxsize];
 	}
 	public boolean last() {
 		return current == size - 1;
@@ -30,15 +31,11 @@ public class ArrayList<T> implements List<T> {
 		nodes[current] = val;
 	}
 
-	public void insert(T val) { //dynamic resizing array O(n), the resizing won't effect the efficiency that much (https://sassafras13.github.io/DynamicResizeLists/) for more info
-		if (size == nodes.length) {
-			T[] tmp = (T[]) new Object[2*nodes.length];
-			System.arraycopy(nodes, 0, tmp, 0, size);
-			nodes = tmp;
-		}
+	public void insert(T val) {
 			for (int i = size - 1; i > current; --i) {
 				nodes[i + 1] = nodes[i];
 			}
+
 		current++;
 		nodes[current] = val;
 		size++;
@@ -62,4 +59,5 @@ public class ArrayList<T> implements List<T> {
 	public int length() {
 		return size;
 	}
+	
 }
