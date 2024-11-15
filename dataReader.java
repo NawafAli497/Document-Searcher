@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
@@ -10,8 +11,8 @@ public class dataReader {
 	public static BST<String> inverted_index;
 	public static void ReadFiles() { // this method is O(S + D*M*log(S))
 		long start = System.nanoTime();
-		documents = new ArrayList<>();
-		stopWords = new ArrayList<>(); // could be changed to hashMap
+		documents = new ArrayList<LinkedList<String>>(countNumberOfDocuments());
+		stopWords = new ArrayList<String>(countNumberOfStopWords()); // could be changed to hashMap
 		inverted_index= new BST<String>();
 		String line;
 		try (BufferedReader bc = new BufferedReader(new FileReader("src/resources/stop.txt"))) {
@@ -118,11 +119,11 @@ public class dataReader {
  
  //this method returns a Linked priority queue 
  // the data is the Documents ID and the priority is the number of times that each word is in the Document
- public static LinkedPQ<Integer> rankingDoc(LinkedList<String> words) {
+ public static PQArray<Integer> rankingDoc(LinkedList<String> words) {
 	 
 	 
-	 LinkedPQ<Integer> rankedDoc=new LinkedPQ<Integer>();
-	 
+	 //LinkedPQ<Integer> rankedDoc=new LinkedPQ<Integer>();
+	 PQArray<Integer> rankedDoc= new PQArray<Integer>(countNumberOfDocuments());
 	 
 	 for (int i = 0; i < documents.length(); i++) {
 		int count=0;
@@ -139,9 +140,10 @@ public class dataReader {
 			count+=termFrequency(s1 , documents.retrieve());
 			 
 			if(count !=0)
-			rankedDoc.enqueue(i, count);
-	 }	 
-	
+			rankedDoc.insert(i, count);	
+			//rankedDoc.enqueue(i, count);
+	 }	 	
+	rankedDoc.mergeSort();
 	return rankedDoc; 
  }
  //count the number of times that a word is in the Document
@@ -167,7 +169,7 @@ public class dataReader {
  	 //without spaces and without "AND" or"OR"
      public static LinkedList<String> getSearchWords() {
          Scanner scanner = new Scanner(System.in);
-         System.out.println("Enter your search query (use 'AND' or 'OR' between words): ");
+         System.out.println("Enter your search query : ");
          String input = scanner.nextLine();
          
          LinkedList<String> wordsList = new LinkedList<>();
@@ -190,11 +192,11 @@ public class dataReader {
      //this is the Document ranking 
      public static void ranking() {
     	 
-    	 ArrayList<PQElement<Integer>> elements = rankingDoc(getSearchWords()).getAllElements();
+    	 PQArray<Integer> elements = rankingDoc(getSearchWords());
     	 System.out.println("DocID\tScore");
     	 for (int i = 0; i < elements.length(); i++) {
-			elements.findIndex(i);
-			System.out.println(elements.retrieve().data +"\t"+elements.retrieve().p);
+			
+			System.out.println(elements.elements[i].data +"\t"+elements.elements[i].p);
 		}
     	 
     	 
@@ -204,7 +206,67 @@ public class dataReader {
      }
 
 
- 
+     private static int countNumberOfStopWords() {
+ 		
+ 		BufferedReader br = null;
+ 		int counter = 0;
+ 		
+ 		try {
+ 			
+ 			br = new BufferedReader(new FileReader("src/resources/stop.txt"));
+ 			String line;
+ 			while (br.readLine() != null) {
+ 				counter++;
+ 			}
+ 			
+ 		} catch (FileNotFoundException e) {
+ 			e.printStackTrace();
+ 		} catch (IOException e) {
+ 			e.printStackTrace();
+ 		} finally {
+ 			
+ 			try {
+ 				br.close();
+ 			} catch (IOException e) {
+ 				e.printStackTrace();
+ 			}
+ 			
+ 		}
+
+ 		return counter;
+ 	}
+
+ 	private static int countNumberOfDocuments() {
+ 		BufferedReader br = null;
+ 		int counter = 0;
+ 		
+ 		try {
+ 			
+ 			br = new BufferedReader(new FileReader("src/resources/stop.txt"));
+ 			String line;
+ 			while ((line = br.readLine()) != null) {
+ 				if (line.equals(",,"))
+ 					break;
+ 				counter++;
+ 			}
+ 			
+ 		} catch (FileNotFoundException e) {
+ 			e.printStackTrace();
+ 		} catch (IOException e) {
+ 			e.printStackTrace();
+ 		} finally {
+ 			
+ 			try {
+ 				br.close();
+ 			} catch (IOException e) {
+ 				e.printStackTrace();
+ 			}
+ 			
+ 		}
+
+ 		return counter;
+
+ 	}
  
  
  

@@ -42,7 +42,7 @@ public class LinkedPQ<T> {
     }
  // Method to get all elements with their priorities for user to print
     public ArrayList<PQElement<T>> getAllElements() {
-    	ArrayList<PQElement<T>> elements = new ArrayList<PQElement<T>>();
+    	ArrayList<PQElement<T>> elements = new ArrayList<PQElement<T>>(length());
         PQNode<T> temp = head;
 
         // Traverse and add each element to the list
