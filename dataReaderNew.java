@@ -36,7 +36,6 @@ public class dataReaderNew {
 
 				tmpList.findFirst();
 				for (int i = 0; i < tmpList.length(); i++) {
-					
 					tmpList.update(tmpList.retrieve().replace("'", ""));
 					tmpList.findNext();
 				}
@@ -51,7 +50,7 @@ public class dataReaderNew {
 			documents.findFirst();
 			for (int i = 0; i < documents.length(); i++) {
 				invertedIndexSize += documents.retrieve().length();
-				// findNext????
+				documents.findNext();
 			}
 			// setInvertedIndex();
 			setInvertedIndexHash(invertedIndexSize);
@@ -80,8 +79,6 @@ public class dataReaderNew {
 		try {
 			
 			br = new BufferedReader(new FileReader("src/resources/stop.txt"));
-		
-			String line;
 			while (br.readLine() != null) {
 				counter++;
 			}
@@ -108,8 +105,8 @@ public class dataReaderNew {
 		int counter = 0;
 		
 		try {
-			//                                       
-			br = new BufferedReader(new FileReader("src/resources/stop.txt"));
+			
+			br = new BufferedReader(new FileReader("src/resources/dataset.csv"));
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.equals(",,"))
@@ -156,9 +153,8 @@ public class dataReaderNew {
 	 */
 
 	private static String[] wordsSeperator(String lineOfTexts) {
-//                                                                       
-		String formatedText = lineOfTexts.substring(lineOfTexts.indexOf(",") + 1, lineOfTexts.length() - 1).replaceAll("[^'\\p{L}0-9\\s-_]", "").toLowerCase().trim();
-		//                         
+
+		String formatedText = lineOfTexts.substring(lineOfTexts.indexOf(",") + 1, lineOfTexts.length() - 1).replaceAll("[^'\\p{L}0-9\\s-_]", "").toLowerCase();
 		return formatedText.split("\\s+");
 	}
 
@@ -191,7 +187,7 @@ public class dataReaderNew {
 	private static void setInvertedIndexHash(int size) {
 		invertedIndexHash = new hashMap<>(size);
 
-		documents.findFirst(); 
+		documents.findFirst();
 
 		for (int i = 0; i < documents.length(); i++) {//d
 			documents.retrieve().findFirst();
