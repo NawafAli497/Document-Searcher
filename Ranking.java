@@ -4,9 +4,13 @@ public class Ranking {
 	
 	
 	//this is the Document ranking 
-    public static void ranking() { //big(o) is O(D*W*L)
+    public static void indexRanking() { //big(o) is O(D*W*L)
    	 
-   	 PQArray<Integer> elements = rankingDoc(getSearchWords());
+   	 rankingArray<Integer> elements = indexRankingDoc(getSearchWords());
+   	if(elements.length()==0) {
+      	 System.out.println("there is no matching resaults");
+      	 return;
+      	 }
    	 System.out.println("DocID\tScore");
    	 for (int i = 0; i < elements.length(); i++) {
 			
@@ -17,40 +21,39 @@ public class Ranking {
    	 
    	 
    	 
-    }
-	
-	
-	 
-	 //this method returns a Linked priority queue 
+    } 
+    //this method returns a sorted array  
 	 // the data is the Documents ID and the priority is the number of times that each word is in the Document
-    private static PQArray<Integer> rankingDoc(LinkedList<String> words) {
+    private static rankingArray<Integer> indexRankingDoc(String[] words) {
 		 long start = System.nanoTime();
-		 PQArray<Integer> rankedDoc= new PQArray<Integer>(dataReaderNew.documents.length());
+		 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
 		 
-		 for (int i = 0; i < dataReaderNew.documents.length(); i++) {
+		 dataReaderNew.documents.findFirst();
+		 for (int i = 0; i < dataReaderNew.documents.length(); i++) {//D
 			int count=0;
-			dataReaderNew.documents.findIndex(i);
-			words.findFirst();
 			
-			 while(!words.last()) {
-				String s1= words.retrieve();
-				count+=termFrequency(s1 , dataReaderNew.documents.retrieve());
-				 
-				words.findNext();
-		 	} 
-			 String s1= words.retrieve();
-				count+=termFrequency(s1 , dataReaderNew.documents.retrieve());
-				 
-				if(count !=0)
-				rankedDoc.insert(i, count);	
+			for (int j = 0; j < words.length; j++) {//W
 				
+				count+=termFrequency(words[j] , dataReaderNew.documents.retrieve());//N
+			}
+				 
+			if(count !=0)
+				rankedDoc.insert(i, count);	
+			dataReaderNew.documents.findNext();	
 		 }	 	
 		rankedDoc.mergeSort();
 		System.out.println(System.nanoTime() - start);
 		return rankedDoc; 
 	 }
+	
+	
+	 
+	
+     	
+		 
+	 
 	 //count the number of times that a word is in the Document
-	 private static int termFrequency(String s1,LinkedList<String> theDoc) {
+	 private static int termFrequency(String s1,LinkedList<String> theDoc) {//n
 		 int count=0;
 		 theDoc.findFirst();
 		 while(!theDoc.last()) {
@@ -70,36 +73,91 @@ public class Ranking {
 	 
 	     // this is a method that asks the user to input words to search in this search engine and retrun a linked list of words 
 	 	 //without spaces and without "AND" or"OR"
-	 private static LinkedList<String> getSearchWords() {
+	 private static String[] getSearchWords() {
 	         Scanner scanner = new Scanner(System.in);
 	         System.out.println("Enter your search query : ");
 	         String input = scanner.nextLine();
 	         
-	         LinkedList<String> wordsList = new LinkedList<>();
+	        input.toLowerCase();
 	         
 	         // Split the input by spaces
 	         String[] words = input.split("\\s");
 	         
-	         
-	         for (int i = 0; i < words.length; i++) {
-	             String word = words[i];
-	            
-	                wordsList.insert(word);
-	             
-	         }
+	        
 	         
 	         
-	         return wordsList;
+	         return words;
 	     }
-	     
-	     
+	 
+	 
+	 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	 public static void Linkedranking() { //
+	   	 
+	   	 rankingArray<Integer> elements = linkedRankingDoc(getSearchWords());
+	   	if(elements.length()==0) {
+	      	 System.out.println("there is no matching resaults");
+	      	 return;
+	      	 }
+	   	 System.out.println("DocID\tScore");
+	   	 for (int i = 0; i < elements.length(); i++) {
+				
+				System.out.println(elements.elements[i].data +"\t"+elements.elements[i].p);
+			}
+	   	 
+	   	 
+	   	 
+	   	 
+	   	 
+	    }
+	 private static rankingArray<Integer> linkedRankingDoc(String[] words) {//W*(L+D*X)
+		 long start = System.nanoTime();
+		 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+		 int[] docTF= new int[dataReader.documents.length()];
+		 
+		 for (int i = 0; i < words.length; i++) {//W
+			if(dataReader.linkedInverted_index.findKey(words[i])) {//L
+				
+				
+				
+				for (int j = 0; j < dataReader.documents.length(); j++) {//D
+					int count=0;
+					
+					if(dataReader.linkedInverted_index.retrieveSecond().findKey(j)) {//X
+						count+=dataReader.linkedInverted_index.retrieveSecond().retrieveSecond();
+					}
+					docTF[j]+=count;
+					
+				}
+			}
+			
+		 }
+		 
+		for (int j = 0; j < docTF.length; j++) {
+			if(docTF[j] !=0)
+				rankedDoc.insert(j, docTF[j]);	
+			
+		}	 
+		rankedDoc.mergeSort();
+		System.out.println(System.nanoTime() - start);
+		return rankedDoc;	
+	}	
+		
+		
+		 
+		 
+		 
+	 
 	    
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	     //these are the same ranking  methods but with using hash map for better big(O) 
 	     
 	     public static void hashRanking() {//big(o) is O(D*L)
 	       	 
-	       	 PQArray<Integer> elements = hashRankingDoc(hashGetSearchWords());
+	       	 rankingArray<Integer> elements = hashRankingDoc(hashGetSearchWords());
+	       	 if(elements.length()==0) {
+	       	 System.out.println("there is no matching resaults");
+	       	 return;
+	       	 }
 	       	 System.out.println("DocID\tScore");
 	       	 for (int i = 0; i < elements.length(); i++) {
 	    			
@@ -111,19 +169,20 @@ public class Ranking {
 	       	 
 	       	 
 	        }
-	     private static PQArray<Integer> hashRankingDoc(hashMap<String, Integer> hashWords) {
+	     private static rankingArray<Integer> hashRankingDoc(hashMap<String, Integer> hashWords) {
 	    	 long start = System.nanoTime();
-			 PQArray<Integer> rankedDoc= new PQArray<Integer>(dataReaderNew.documents.length());
+			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
 			 
+			 dataReaderNew.documents.findFirst();
 			 for (int i = 0; i < dataReaderNew.documents.length(); i++) {
-				int count=0;
-				dataReaderNew.documents.findIndex(i);
+				 	int count=0;
+					dataReaderNew.documents.findIndex(i);
 				
 					count+=hashTermFrequency(hashWords , dataReaderNew.documents.retrieve());
 					 
 					if(count !=0)
-					rankedDoc.insert(i, count);	
-					
+						rankedDoc.insert(i, count);	
+					dataReaderNew.documents.findNext();
 			 }	 	
 			rankedDoc.mergeSort();
 			System.out.println(System.nanoTime() - start);
@@ -133,7 +192,7 @@ public class Ranking {
 	     private static int hashTermFrequency(hashMap<String, Integer> hashWords,LinkedList<String> theDoc) {
 			 int count=0;
 			 theDoc.findFirst();
-			 while(!theDoc.last()) {
+			 while(!theDoc.last()) {//L
 			 		if(hashWords.get(theDoc.retrieve())!=null) {
 			 			count++;
 			 		}
@@ -152,7 +211,7 @@ public class Ranking {
 	         System.out.println("Enter your search query : ");
 	         String input = scanner.nextLine();
 	         
-	        
+	         input.toLowerCase();
 	         
 	         // Split the input by spaces
 	         String[] words = input.split("\\s");
@@ -165,7 +224,86 @@ public class Ranking {
 	             
 	         }
 	         
-	         scanner.close();
+	        
 	         return hashWords;
 	     }
+	     ////////////////////////////////////////////////////////////////////////////////////////////////
+	     //BST ranking
+	     
+	     
+	     
+	     public static void BSTranking() { //big(o) is W*L*logN
+	       	 
+	       	 rankingArray<Integer> elements = BSTrankingDoc(getSearchWords());
+	       	if(elements.length()==0) {
+	          	 System.out.println("there is no matching resaults");
+	          	 return;
+	          	 }
+	       	 System.out.println("DocID\tScore");
+	       	 for (int i = 0; i < elements.length(); i++) {
+	    			
+	    			System.out.println(elements.elements[i].data +"\t"+elements.elements[i].p);
+	    		}
+	       	 
+	       	 
+	       	 
+	       	 
+	       	 
+	        }
+	     
+	     
+	     
+	     
+	     
+	     private static rankingArray<Integer> BSTrankingDoc(String[] words) {// W*logB + W*L*logN + M*logM
+			
+	    	 long start = System.nanoTime();
+			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+			 int[] docTF= new int[dataReader.documents.length()];
+			 
+			 for (int i = 0; i < words.length; i++) {// W
+				if(!dataReader.BSTinverted_index.findkey(words[i]))//W logB
+					continue;
+				
+				BST<Integer> b1= dataReader.BSTinverted_index.retrieve();
+				
+				dataReader.documents.findFirst();
+				for (int q = 0; q < dataReader.documents.length(); q++) {//W*L
+						int count =0;
+						
+						if(b1.findkey(q)) {//W*L*logN
+							count+=b1.retrieve();
+						}
+					docTF[q]+=count;
+					dataReader.documents.findNext();
+				}
+			
+				
+			
+				
+					
+					
+			}
+			 for (int j = 0; j < docTF.length; j++) {
+				if(docTF[j]!=0)
+				 rankedDoc.insert(j, docTF[j]);
+			}
+					 
+					
+						 	 	
+			rankedDoc.mergeSort();//M*logM
+			System.out.println(System.nanoTime() - start);
+			return rankedDoc; 
+		 }
+		
+		 
+		     
+		
+		 
+		 
+		 
+		 
+		 
+		 
+		 
 }

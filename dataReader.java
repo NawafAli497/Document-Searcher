@@ -8,12 +8,14 @@ public class dataReader {
 	
 	public static ArrayList<String> stopWords;
 	public static ArrayList<LinkedList<String>> documents;
-	public static BST<String> inverted_index;
+	public static MyBST<String> BSTinverted_index;
+	public static MyLinkedList<String,MyLinkedList<Integer, Integer>> linkedInverted_index;
 	public static void ReadFiles() { // this method is O(S + D*M*log(S))
 		long start = System.nanoTime();
 		documents = new ArrayList<LinkedList<String>>(countNumberOfDocuments());
 		stopWords = new ArrayList<String>(countNumberOfStopWords()); // could be changed to hashMap
-		inverted_index= new BST<String>();
+		BSTinverted_index= new MyBST<String>();
+		linkedInverted_index = new MyLinkedList<String,MyLinkedList<Integer, Integer>>();
 		String line;
 		try (BufferedReader bc = new BufferedReader(new FileReader("src/resources/stop.txt"))) {
 			while ((line = bc.readLine()) != null) { // O(S)
@@ -22,6 +24,7 @@ public class dataReader {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	
 		try (BufferedReader br = new BufferedReader(new FileReader("src/resources/dataset.csv"))) {
 			br.readLine();
@@ -29,11 +32,19 @@ public class dataReader {
 				if (line.equals(",,"))
 					break;
 
-				String[] tmp = wordsSeperator(line);
-
-				documents.insert(noStopWordsList(tmp)); // O(D*M*log(S))
-
+				LinkedList<String> tmpList = noStopWordsList(wordsSeperator(line));
+				tmpList.findFirst();
+				for (int i = 0; i < tmpList.length(); i++) {
+					
+					tmpList.update(tmpList.retrieve().replace("'", ""));
+					tmpList.findNext();
+				}
+				documents.insert(tmpList); // O(D*M*log(S))
+				
+				
 			}
+			BSTsetInvertedIndex();
+			linkedSetInvertedIndex();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -66,13 +77,12 @@ public class dataReader {
 		return false;
 	}
 
-	private static String[] wordsSeperator(String lineOfTexts) { // this method removes the removes every non alphaNumeric and ' in the String, it is O(1)
-		
-		String formatedText = lineOfTexts.substring(lineOfTexts.indexOf(",") + 1 , lineOfTexts.length()-1).replaceAll("[^a-zA-Z0-9\\s']", "").toLowerCase();
-		String[] tmp = formatedText.split(" ");
-		return tmp;
-		
-	}	
+	private static String[] wordsSeperator(String lineOfTexts) {
+//      
+String formatedText = lineOfTexts.substring(lineOfTexts.indexOf(",") + 1, lineOfTexts.length() - 1).replaceAll("[^'\\p{L}0-9\\s-_]", "").toLowerCase().trim();
+//                         
+return formatedText.split("\\s+");
+}
 	
 	private static LinkedList<String> noStopWordsList(String[] texts) { // this method inserts the elements from the given string array in the LinkedList and returns it , it is O(M*log(S)) where M is the number of strings in the array
 		LinkedList<String> tmp = new LinkedList<>();
@@ -151,6 +161,98 @@ public class dataReader {
 
  	}
  
+
+	  private static void BSTsetInvertedIndex() { 
+		  documents.findFirst();
+	  
+		  for(int i = 0 ; i < documents.length(); i++) {
+		  
+			  documents.retrieve().findFirst(); 
+			  for(int j = 0 ; j <documents.retrieve().length() ; j++) {
+		  
+				  BSTinverted_index.insert(documents.retrieve().retrieve() , i);
+	  
+				  documents.retrieve().findNext(); 
+			  } 
+		  
+		  documents.findNext();
+	  
+		  }
+	  }
+	  private static void linkedSetInvertedIndex() { 
+		  documents.findFirst();
+	  
+	  for(int i = 0 ; i < documents.length(); i++) {
+		  
+		  documents.retrieve().findFirst(); 
+		  for(int j = 0 ; j <documents.retrieve().length() ; j++) {
+			 
+			  
+			  if(linkedInverted_index.findKey(documents.retrieve().retrieve())) {
+				  if(linkedInverted_index.retrieveSecond().findKey(i)){
+				  
+				  int TF=linkedInverted_index.retrieveSecond().retrieveSecond()+1;
+				  
+				  linkedInverted_index.retrieveSecond().updateSecond(TF);
+				  }
+				  else {
+					 
+					  linkedInverted_index.retrieveSecond().insert(i,1);
+				  }
+					  
+			  }
+			  else {
+				  MyLinkedList<Integer, Integer> temp= new MyLinkedList<Integer, Integer>();
+				  temp.insert(i,1);
+			  
+				 linkedInverted_index.insert(documents.retrieve().retrieve() , temp);
+			  
+			  }
+			 documents.retrieve().findNext();
+		} 
+		  
+		  documents.findNext();
+	  
+	  }
+	 
+	  }
+	  public static void printLinkedInvertedIndex() {
+		    linkedInverted_index.findFirst(); // Start with the first element
+
+		    while (!linkedInverted_index.last()) { // Iterate through all elements
+		        // Retrieve the key (word)
+		        String word = linkedInverted_index.retrieveFirst();
+
+		        // Retrieve the linked list of document IDs and frequencies
+		        MyLinkedList<Integer, Integer> docList = linkedInverted_index.retrieveSecond();
+
+		        System.out.print("Word: " + word + " -> ");
+
+		        docList.findFirst();
+		        while (!docList.last()) { // Print document ID and frequency pairs
+		            System.out.print("(DocID: " + docList.retrieveFirst() + ", Frequency: " + docList.retrieveSecond() + ") ");
+		            docList.findNext();
+		        }
+		        // Print the last element
+		        System.out.print("(DocID: " + docList.retrieveFirst() + ", Frequency: " + docList.retrieveSecond() + ") ");
+		        System.out.println(); // New line for the next word
+
+		        linkedInverted_index.findNext();
+		    }
+		    // Print the last word
+		    String lastWord = linkedInverted_index.retrieveFirst();
+		    MyLinkedList<Integer, Integer> lastDocList = linkedInverted_index.retrieveSecond();
+
+		    System.out.print("Word: " + lastWord + " -> ");
+		    lastDocList.findFirst();
+		    while (!lastDocList.last()) {
+		        System.out.print("(DocID: " + lastDocList.retrieveFirst() + ", Frequency: " + lastDocList.retrieveSecond() + ") ");
+		        lastDocList.findNext();
+		    }
+		    System.out.print("(DocID: " + lastDocList.retrieveFirst() + ", Frequency: " + lastDocList.retrieveSecond() + ") ");
+		    System.out.println(); // New line for the last word
+		}
+
  
  
  

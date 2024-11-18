@@ -13,10 +13,13 @@ public class BST<T> {
 	public boolean full() {
 		return false;
 	}
-	public LinkedList<Integer> retrieve () {
+	public T retrieve () {
 		return current.data;
 	}
-    public boolean update(String key, int data){
+	public int retrieveKey() {
+		return current.key;
+	}
+    public boolean update(int key, T data){
 		remove_key(current.key);
 		return insert(key, data);
 	}
@@ -73,17 +76,17 @@ public class BST<T> {
 				return findparent(p, t.right);
 		}
 	}
-    public boolean findkey(String tkey) {
+    public boolean findkey(int tkey) {
 		BSTNode<T> p = root, q = root;	
 		if(empty())
 			return false;	
 		while(p != null) {
 			q = p;
-			if(p.key.equalsIgnoreCase(tkey)) {
+			if(p.key == tkey) {
 				current = p;
 				return true;
 			}
-			else if(tkey.compareToIgnoreCase(p.key)<0)
+			else if(tkey < p.key)
 				p = p.left;
 			else
 				p = p.right;
@@ -91,11 +94,10 @@ public class BST<T> {
 		current = q;
 		return false;
 	}
-    public boolean insert(String k, int val) {
+    public boolean insert(int k, T val) {
 		BSTNode<T> p, q = current;
 		if(findkey(k)) {
-			current = q;// findkey() modified current
-			current.insertDoc(val);
+			current = q;  // findkey() modified current
 			return false; // key already in the BST
 		}
 		p = new BSTNode<T>(k, val);
@@ -105,7 +107,7 @@ public class BST<T> {
 		}
 		else {
 			// current is pointing to parent of the new key
-			if (k.compareToIgnoreCase(current.key) < 0)
+			if (k < current.key)
 				current.left = p;
 			else
 				current.right = p;
@@ -113,20 +115,20 @@ public class BST<T> {
 			return true;
 		}
 	}
-    public boolean remove_key(String tkey){
+    public boolean remove_key(int tkey){
 		BooleanWrapper removed = new BooleanWrapper(false);
 		BSTNode<T> p;
 		p = remove_aux(tkey, root, removed);
 		current = root = p;
 		return removed.getValue();
 	}
-    private BSTNode<T> remove_aux(String key, BSTNode<T> p, BooleanWrapper flag) {
+    private BSTNode<T> remove_aux(int key, BSTNode<T> p, BooleanWrapper flag) {
 		BSTNode<T> q, child = null;
 		if(p == null)
 			return null;
-		if(key.compareToIgnoreCase(p.key) <0)
+		if(key < p.key)
 			p.left = remove_aux(key, p.left, flag); //go left
-		else if(key.compareToIgnoreCase(p.key) <0)
+		else if(key > p.key)
 			p.right = remove_aux(key, p.right, flag); //go right
 		else { // key is found
 			flag.setValue(true);
@@ -154,10 +156,32 @@ public class BST<T> {
 		}
 		return p;
 	}
-	public void showDoc(String key) {
-		if(findkey(key))
-			System.out.println(current.toString());
-		else System.out.println(key+": not found");
+	public int countNodesIn(int k) {
+		boolean found=false;
+		BSTNode<T> temp =root;
 		
+		while(temp !=null && !found  ) {
+			if(temp.key==k)
+				found=true;
+			else if(k>temp.key)
+				temp=temp.right;
+			else 
+				
+				temp=temp.left;
+		}
+		if(temp==null)return 0;
+		return helpCountNodesIn( temp );
+		
+		
+		
+		
+		// Write the member method countNodesIn member of the class BST that returns the number of nodes in the subtree rooted at
+		// the node with key k. Assume that k exists. You are not allowed to call any of the BST methods.
+	}
+	private int helpCountNodesIn(BSTNode<T> temp ) {
+		if(temp==null )
+			return 0;
+		 
+		return  1 + helpCountNodesIn(temp.left)+helpCountNodesIn(temp.right);
 	}
 }
