@@ -12,6 +12,7 @@ public class QueryProcessing {
 
 
 		
+		
 		Scanner keyboard = new Scanner(System.in);
 		String exp = keyboard.nextLine();
 		LinkedList<Integer> test = evalExp(exp);
