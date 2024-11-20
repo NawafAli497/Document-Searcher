@@ -8,13 +8,13 @@ public class dataReader {
 	
 	public static ArrayList<String> stopWords;
 	public static ArrayList<LinkedList<String>> documents;
-	public static MyBST<String> BSTinverted_index;
+	public static MyBST<BSTobj> BSTinverted_index;
 	public static MyLinkedList<String,MyLinkedList<Integer, Integer>> linkedInverted_index;
 	public static void ReadFiles() { // this method is O(S + D*M*log(S))
 		long start = System.nanoTime();
 		documents = new ArrayList<LinkedList<String>>(countNumberOfDocuments());
 		stopWords = new ArrayList<String>(countNumberOfStopWords()); // could be changed to hashMap
-		BSTinverted_index= new MyBST<String>();
+		BSTinverted_index= new MyBST<BSTobj>();
 		linkedInverted_index = new MyLinkedList<String,MyLinkedList<Integer, Integer>>();
 		String line;
 		try (BufferedReader bc = new BufferedReader(new FileReader("src/resources/stop.txt"))) {
@@ -169,9 +169,14 @@ return formatedText.split("\\s+");
 		  
 			  documents.retrieve().findFirst(); 
 			  for(int j = 0 ; j <documents.retrieve().length() ; j++) {
-		  
-				  BSTinverted_index.insert(documents.retrieve().retrieve() , i);
-	  
+				  if(BSTinverted_index.findkey(documents.retrieve().retrieve())) {
+					  
+					  BSTinverted_index.retrieve().insertDoc(i); //if i find the word i will call insert to doc which will check if the index is there or not if its there it will +1
+				  }
+				  else {
+				  BSTobj b= new BSTobj(i);
+				  BSTinverted_index.insert(documents.retrieve().retrieve() , b);
+				  }
 				  documents.retrieve().findNext(); 
 			  } 
 		  
