@@ -65,7 +65,7 @@ public class LinkedList<T> implements List<T> {
 	  public int length() {
 		  return size;
 	   }
-	  public boolean findKey(String key) {
+	  public boolean findKey(T key) {
 	        Node<T> tmp = head;
 	        if(head==null)
 	        	return false;
