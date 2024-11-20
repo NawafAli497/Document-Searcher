@@ -9,14 +9,14 @@ public class dataReader {
 	public static ArrayList<String> stopWords;
 	public static ArrayList<LinkedList<String>> documents;
 	public static MyBST<BSTobj> BSTinverted_index;
-	public static MyLinkedList<String,MyLinkedList<Integer, Integer>> linkedInverted_index;
+	public static LinkedList<LinkedListobj> linkedInverted_index;
 	public static hashMap<String, BSTobj> invertedIndexHash = null;
 	public static void ReadFiles() { // this method is O(S + D*M*log(S))
 		long start = System.nanoTime();
 		documents = new ArrayList<LinkedList<String>>(countNumberOfDocuments());
 		stopWords = new ArrayList<String>(countNumberOfStopWords()); // could be changed to hashMap
 		BSTinverted_index= new MyBST<BSTobj>();
-		linkedInverted_index = new MyLinkedList<String,MyLinkedList<Integer, Integer>>();
+		linkedInverted_index = new LinkedList<LinkedListobj>();
 		String line;
 		try (BufferedReader bc = new BufferedReader(new FileReader("src/resources/stop.txt"))) {
 			while ((line = bc.readLine()) != null) { // O(S)
@@ -172,7 +172,7 @@ return formatedText.split("\\s+");
  	}
  
 
-	  private static void BSTsetInvertedIndex() { 
+	 /* private static void BSTsetInvertedIndex() { 
 		  documents.findFirst();
 	  
 		  for(int i = 0 ; i < documents.length(); i++) {
@@ -193,7 +193,39 @@ return formatedText.split("\\s+");
 		  documents.findNext();
 	  
 		  }
-	  }
+	  } */
+	  public static void BSTsetInvertedIndex() { 
+          RecursiveBSTsetInvertedIndex(0 , documents.length()-1);
+       }
+
+      private static void RecursiveBSTsetInvertedIndex(int start , int end) {
+
+          if(start > end)
+              return;
+
+          int mid = (start + end)/2;
+
+          documents.findIndex(mid);
+          documents.retrieve().findFirst(); 
+
+          for(int j = 0 ; j <documents.retrieve().length() ; j++) {
+        	  
+        	  if(BSTinverted_index.findkey(documents.retrieve().retrieve())) {
+				  
+				  BSTinverted_index.retrieve().insertDoc(mid); //if i find the word i will call insert to doc which will check if the index is there or not if its there it will +1
+			  }
+        	  else {
+				  BSTobj b= new BSTobj(mid);
+				  BSTinverted_index.insert(documents.retrieve().retrieve() , b);
+				  }
+
+              documents.retrieve().findNext(); 
+          } 
+
+          RecursiveBSTsetInvertedIndex(start , mid-1);
+          RecursiveBSTsetInvertedIndex(mid+1 , end);
+
+      }
 	  private static void linkedSetInvertedIndex() { 
 		  documents.findFirst();
 	  
@@ -203,24 +235,16 @@ return formatedText.split("\\s+");
 		  for(int j = 0 ; j <documents.retrieve().length() ; j++) {
 			 
 			  
-			  if(linkedInverted_index.findKey(documents.retrieve().retrieve())) {
-				  if(linkedInverted_index.retrieveSecond().findKey(i)){
-				  
-				  int TF=linkedInverted_index.retrieveSecond().retrieveSecond()+1;
-				  
-				  linkedInverted_index.retrieveSecond().updateSecond(TF);
+			  if(linkedListFindWord(documents.retrieve().retrieve())) {
+				  linkedInverted_index.retrieve().insertDoc(i);
 				  }
-				  else {
-					 
-					  linkedInverted_index.retrieveSecond().insert(i,1);
-				  }
+				 
 					  
-			  }
-			  else {
-				  MyLinkedList<Integer, Integer> temp= new MyLinkedList<Integer, Integer>();
-				  temp.insert(i,1);
 			  
-				 linkedInverted_index.insert(documents.retrieve().retrieve() , temp);
+			  else {
+				  LinkedListobj temp= new LinkedListobj(documents.retrieve().retrieve(),i);
+			  
+				 linkedInverted_index.insert(temp);
 			  
 			  }
 			 documents.retrieve().findNext();
@@ -258,44 +282,27 @@ return formatedText.split("\\s+");
 				}
 				documents.findNext();
 
-			}}
-	  public static void printLinkedInvertedIndex() {
-		    linkedInverted_index.findFirst(); // Start with the first element
-
-		    while (!linkedInverted_index.last()) { // Iterate through all elements
-		        // Retrieve the key (word)
-		        String word = linkedInverted_index.retrieveFirst();
-
-		        // Retrieve the linked list of document IDs and frequencies
-		        MyLinkedList<Integer, Integer> docList = linkedInverted_index.retrieveSecond();
-
-		        System.out.print("Word: " + word + " -> ");
-
-		        docList.findFirst();
-		        while (!docList.last()) { // Print document ID and frequency pairs
-		            System.out.print("(DocID: " + docList.retrieveFirst() + ", Frequency: " + docList.retrieveSecond() + ") ");
-		            docList.findNext();
-		        }
-		        // Print the last element
-		        System.out.print("(DocID: " + docList.retrieveFirst() + ", Frequency: " + docList.retrieveSecond() + ") ");
-		        System.out.println(); // New line for the next word
-
-		        linkedInverted_index.findNext();
-		    }
-		    
-		    // Print the last word
-		    String lastWord = linkedInverted_index.retrieveFirst();
-		    MyLinkedList<Integer, Integer> lastDocList = linkedInverted_index.retrieveSecond();
-
-		    System.out.print("Word: " + lastWord + " -> ");
-		    lastDocList.findFirst();
-		    while (!lastDocList.last()) {
-		        System.out.print("(DocID: " + lastDocList.retrieveFirst() + ", Frequency: " + lastDocList.retrieveSecond() + ") ");
-		        lastDocList.findNext();
-		    }
-		    System.out.print("(DocID: " + lastDocList.retrieveFirst() + ", Frequency: " + lastDocList.retrieveSecond() + ") ");
-		    System.out.println(); // New line for the last word
-		}
+			}
+			}
+	  public static boolean linkedListFindWord(String word) {
+		  
+				if(linkedInverted_index.length()==0)
+					return false;
+				linkedInverted_index.findFirst();
+				while(!linkedInverted_index.last()) {
+					if(linkedInverted_index.retrieve().key.equalsIgnoreCase(word)) {
+						return true;
+					}
+					linkedInverted_index.findNext();
+				}
+				if(linkedInverted_index.retrieve().key.equalsIgnoreCase(word)) {
+					return true;
+				}
+				
+				return false;
+			
+	  }
+	  
 	  
 
  

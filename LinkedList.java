@@ -65,5 +65,23 @@ public class LinkedList<T> implements List<T> {
 	  public int length() {
 		  return size;
 	   }
+	  public boolean findKey(String key) {
+	        Node<T> tmp = head;
+	        if(head==null)
+	        	return false;
+	        while (tmp.next != null) {
+	            if (tmp.data.equals(key)) {
+	                current = tmp;
+	                return true;
+	            }
+	            tmp = tmp.next;
+	        }
+	        if (tmp.data.equals(key)) {
+	        	current=tmp;
+	        return true;
+	        }
+	        current=tmp;
+	        return false;
+	    }
 
 }
