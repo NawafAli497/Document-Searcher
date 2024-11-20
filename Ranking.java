@@ -115,15 +115,15 @@ public class Ranking {
 		 int[] docTF= new int[dataReader.documents.length()];
 		 
 		 for (int i = 0; i < words.length; i++) {//W
-			if(dataReader.linkedInverted_index.findKey(words[i])) {//L
+			if(dataReader.linkedListFindWord(words[i])) {//L
 				
 				
 				
 				for (int j = 0; j < dataReader.documents.length(); j++) {//D
 					int count=0;
 					
-					if(dataReader.linkedInverted_index.retrieveSecond().findKey(j)) {//X
-						count+=dataReader.linkedInverted_index.retrieveSecond().retrieveSecond();
+					if(dataReader.linkedInverted_index.retrieve().findDoc(j)) {//X
+						count+=dataReader.linkedInverted_index.retrieve().data.retrieve().TF;
 					}
 					docTF[j]+=count;
 					
