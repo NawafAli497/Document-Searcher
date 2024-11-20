@@ -163,12 +163,59 @@ public class Ranking {
 	    			
 	    			System.out.println(elements.elements[i].data +"\t"+elements.elements[i].p);
 	    		}
+	     }
+	     
 	       	 
+	       	 public static void hashRanking2() {//big(o) is O(D*L)
+		       	 
+		       	 rankingArray<Integer> elements = hashRankingDoc2(getSearchWords());
+		       	 if(elements.length()==0) {
+		       	 System.out.println("there is no matching resaults");
+		       	 return;
+		       	 }
+		       	 System.out.println("DocID\tScore");
+		       	 for (int i = 0; i < elements.length(); i++) {
+		    			
+		    			System.out.println(elements.elements[i].data +"\t"+elements.elements[i].p);
+		    		}
 	       	 
 	       	 
 	       	 
 	       	 
 	        }
+	     private static rankingArray<Integer> hashRankingDoc2(String[] words) {//w*d*logN+nlogn
+	    	 long start = System.nanoTime();
+			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+			 int[] docTF= new int[dataReader.documents.length()];
+			 
+			 for (int i = 0; i < words.length; i++) {//W
+				if(dataReaderNew.invertedIndexHash.get(words[i])!= null) {//1
+					dataReaderNew.invertedIndexHash.get(words[i]).findFirst();
+					
+						
+					
+					for (int j = 0; j < dataReader.documents.length(); j++) {//D
+						int count=0;
+						if(dataReaderNew.invertedIndexHash.get(words[i]).retrieve().findkey(j)) {//D*logN
+							count+=dataReaderNew.invertedIndexHash.get(words[i]).retrieve().retrieve();
+						}
+						docTF[j]+=count;
+						
+					}
+				}
+				
+			 }
+			 
+			for (int j = 0; j < docTF.length; j++) {
+				if(docTF[j] !=0)
+					rankedDoc.insert(j, docTF[j]);	
+				
+			}	 
+			rankedDoc.mergeSort();
+			System.out.println(System.nanoTime() - start);
+			return rankedDoc;	
+		}	
+		 
 	     private static rankingArray<Integer> hashRankingDoc(hashMap<String, Integer> hashWords) {
 	    	 long start = System.nanoTime();
 			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
@@ -265,7 +312,7 @@ public class Ranking {
 				if(!dataReader.BSTinverted_index.findkey(words[i]))//W logB
 					continue;
 				
-				BST<Integer> b1= dataReader.BSTinverted_index.retrieve();
+				BST<Integer> b1= dataReader.BSTinverted_index.retrieve().data;
 				
 				dataReader.documents.findFirst();
 				for (int q = 0; q < dataReader.documents.length(); q++) {//W*L
