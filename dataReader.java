@@ -10,6 +10,7 @@ public class dataReader {
 	public static ArrayList<LinkedList<String>> documents;
 	public static MyBST<BSTobj> BSTinverted_index;
 	public static MyLinkedList<String,MyLinkedList<Integer, Integer>> linkedInverted_index;
+	public static hashMap<String, BSTobj> invertedIndexHash = null;
 	public static void ReadFiles() { // this method is O(S + D*M*log(S))
 		long start = System.nanoTime();
 		documents = new ArrayList<LinkedList<String>>(countNumberOfDocuments());
@@ -43,6 +44,15 @@ public class dataReader {
 				
 				
 			}
+			int invertedIndexSize = 0;
+
+			documents.findFirst();
+			for (int i = 0; i < documents.length(); i++) {
+				invertedIndexSize += documents.retrieve().length();
+				documents.findNext();
+			}
+			// setInvertedIndex();
+			setInvertedIndexHash(invertedIndexSize);
 			BSTsetInvertedIndex();
 			linkedSetInvertedIndex();
 
@@ -221,6 +231,34 @@ return formatedText.split("\\s+");
 	  }
 	 
 	  }
+	  private static void setInvertedIndexHash(int size) {
+			invertedIndexHash = new hashMap<>(size);
+
+			documents.findFirst(); 
+
+			for (int i = 0; i < documents.length(); i++) {//d
+				documents.retrieve().findFirst();
+				for (int j = 0; j < documents.retrieve().length(); j++) {//s
+					if(invertedIndexHash.get(documents.retrieve().retrieve())!=null) {
+						
+						invertedIndexHash.get(documents.retrieve().retrieve()).findFirst();
+						
+						invertedIndexHash.get(documents.retrieve().retrieve()).retrieve().insertDoc(i);
+						
+						
+					}
+					else {
+						BSTobj tmp= new BSTobj(i);
+						
+						invertedIndexHash.put(documents.retrieve().retrieve(), tmp);
+					}
+					documents.retrieve().findNext();
+					
+					
+				}
+				documents.findNext();
+
+			}}
 	  public static void printLinkedInvertedIndex() {
 		    linkedInverted_index.findFirst(); // Start with the first element
 
@@ -244,6 +282,7 @@ return formatedText.split("\\s+");
 
 		        linkedInverted_index.findNext();
 		    }
+		    
 		    // Print the last word
 		    String lastWord = linkedInverted_index.retrieveFirst();
 		    MyLinkedList<Integer, Integer> lastDocList = linkedInverted_index.retrieveSecond();
@@ -257,6 +296,7 @@ return formatedText.split("\\s+");
 		    System.out.print("(DocID: " + lastDocList.retrieveFirst() + ", Frequency: " + lastDocList.retrieveSecond() + ") ");
 		    System.out.println(); // New line for the last word
 		}
+	  
 
  
  

@@ -13,10 +13,10 @@ public class MyBST<T> {
 	public boolean full() {
 		return false;
 	}
-	public BST<Integer> retrieve () {
+	public T retrieve () {
 		return current.data;
 	}
-    public boolean update(String key, int data){
+    public boolean update(String key, T data){
 		remove_key(current.key);
 		return insert(key, data);
 	}
@@ -91,10 +91,10 @@ public class MyBST<T> {
 		current = q;
 		return false;
 	}
-    public boolean insert(String k, int val) {
+    public boolean insert(String k, T val) {
 		MyBSTNode<T> p, q = current;
 		if(findkey(k)) {
-			current.insertDoc(val);
+			
 			current = q;// findkey() modified current
 			
 			return false; // key already in the BST
@@ -114,6 +114,7 @@ public class MyBST<T> {
 			return true;
 		}
 	}
+    
     public boolean remove_key(String tkey){
 		BooleanWrapper removed = new BooleanWrapper(false);
 		MyBSTNode<T> p;

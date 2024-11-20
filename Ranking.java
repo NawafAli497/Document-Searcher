@@ -26,20 +26,20 @@ public class Ranking {
 	 // the data is the Documents ID and the priority is the number of times that each word is in the Document
     private static rankingArray<Integer> indexRankingDoc(String[] words) {
 		 long start = System.nanoTime();
-		 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+		 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReader.documents.length());
 		 
-		 dataReaderNew.documents.findFirst();
-		 for (int i = 0; i < dataReaderNew.documents.length(); i++) {//D
+		 dataReader.documents.findFirst();
+		 for (int i = 0; i < dataReader.documents.length(); i++) {//D
 			int count=0;
 			
 			for (int j = 0; j < words.length; j++) {//W
 				
-				count+=termFrequency(words[j] , dataReaderNew.documents.retrieve());//N
+				count+=termFrequency(words[j] , dataReader.documents.retrieve());//N
 			}
 				 
 			if(count !=0)
 				rankedDoc.insert(i, count);	
-			dataReaderNew.documents.findNext();	
+			dataReader.documents.findNext();	
 		 }	 	
 		rankedDoc.mergeSort();
 		System.out.println(System.nanoTime() - start);
@@ -111,7 +111,7 @@ public class Ranking {
 	    }
 	 private static rankingArray<Integer> linkedRankingDoc(String[] words) {//W*(L+D*X)
 		 long start = System.nanoTime();
-		 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+		 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReader.documents.length());
 		 int[] docTF= new int[dataReader.documents.length()];
 		 
 		 for (int i = 0; i < words.length; i++) {//W
@@ -185,19 +185,19 @@ public class Ranking {
 	        }
 	     private static rankingArray<Integer> hashRankingDoc2(String[] words) {//w*d*logN+nlogn
 	    	 long start = System.nanoTime();
-			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReader.documents.length());
 			 int[] docTF= new int[dataReader.documents.length()];
 			 
 			 for (int i = 0; i < words.length; i++) {//W
-				if(dataReaderNew.invertedIndexHash.get(words[i])!= null) {//1
-					dataReaderNew.invertedIndexHash.get(words[i]).findFirst();
+				if(dataReader.invertedIndexHash.get(words[i])!= null) {//1
+					dataReader.invertedIndexHash.get(words[i]).findFirst();
 					
 						
 					
 					for (int j = 0; j < dataReader.documents.length(); j++) {//D
 						int count=0;
-						if(dataReaderNew.invertedIndexHash.get(words[i]).retrieve().findkey(j)) {//D*logN
-							count+=dataReaderNew.invertedIndexHash.get(words[i]).retrieve().retrieve();
+						if(dataReader.invertedIndexHash.get(words[i]).retrieve().data.findkey(j)) {//D*logN
+							count+=dataReader.invertedIndexHash.get(words[i]).retrieve().data.retrieve();
 						}
 						docTF[j]+=count;
 						
@@ -218,18 +218,18 @@ public class Ranking {
 		 
 	     private static rankingArray<Integer> hashRankingDoc(hashMap<String, Integer> hashWords) {
 	    	 long start = System.nanoTime();
-			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReader.documents.length());
 			 
-			 dataReaderNew.documents.findFirst();
-			 for (int i = 0; i < dataReaderNew.documents.length(); i++) {
+			 dataReader.documents.findFirst();
+			 for (int i = 0; i < dataReader.documents.length(); i++) {
 				 	int count=0;
-					dataReaderNew.documents.findIndex(i);
+				 	dataReader.documents.findIndex(i);
 				
-					count+=hashTermFrequency(hashWords , dataReaderNew.documents.retrieve());
+					count+=hashTermFrequency(hashWords , dataReader.documents.retrieve());
 					 
 					if(count !=0)
 						rankedDoc.insert(i, count);	
-					dataReaderNew.documents.findNext();
+					dataReader.documents.findNext();
 			 }	 	
 			rankedDoc.mergeSort();
 			System.out.println(System.nanoTime() - start);
@@ -305,7 +305,7 @@ public class Ranking {
 	     private static rankingArray<Integer> BSTrankingDoc(String[] words) {// W*logB + W*L*logN + M*logM
 			
 	    	 long start = System.nanoTime();
-			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReaderNew.documents.length());
+			 rankingArray<Integer> rankedDoc= new rankingArray<Integer>(dataReader.documents.length());
 			 int[] docTF= new int[dataReader.documents.length()];
 			 
 			 for (int i = 0; i < words.length; i++) {// W
