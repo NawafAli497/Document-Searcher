@@ -190,14 +190,14 @@ public class Ranking {
 			 
 			 for (int i = 0; i < words.length; i++) {//W
 				if(dataReader.invertedIndexHash.get(words[i])!= null) {//1
-					dataReader.invertedIndexHash.get(words[i]).findFirst();
+					dataReader.invertedIndexHash.get(words[i]);
 					
 						
 					
 					for (int j = 0; j < dataReader.documents.length(); j++) {//D
 						int count=0;
-						if(dataReader.invertedIndexHash.get(words[i]).retrieve().data.findkey(j)) {//D*logN
-							count+=dataReader.invertedIndexHash.get(words[i]).retrieve().data.retrieve();
+						if(dataReader.invertedIndexHash.get(words[i]).findDoc(j)) {//D*logN
+							count+=dataReader.invertedIndexHash.get(words[i]).data.retrieve().TF;
 						}
 						docTF[j]+=count;
 						
@@ -312,14 +312,14 @@ public class Ranking {
 				if(!dataReader.BSTinverted_index.findkey(words[i]))//W logB
 					continue;
 				
-				BST<Integer> b1= dataReader.BSTinverted_index.retrieve().data;
+				LinkedListobj l= dataReader.BSTinverted_index.retrieve();
 				
 				dataReader.documents.findFirst();
 				for (int q = 0; q < dataReader.documents.length(); q++) {//W*L
 						int count =0;
 						
-						if(b1.findkey(q)) {//W*L*logN
-							count+=b1.retrieve();
+						if(l.findDoc(q)) {//W*L*logN
+							count+=l.data.retrieve().TF;
 						}
 					docTF[q]+=count;
 					dataReader.documents.findNext();
