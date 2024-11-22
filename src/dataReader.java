@@ -58,6 +58,7 @@ public class dataReader {
 			e.printStackTrace();
 		}
 
+
 	}
 
 	private static boolean binarySearchStopWords(String word) { // this method checks if the given string is in the stop
@@ -146,7 +147,7 @@ public class dataReader {
 
 		try {
 
-			br = new BufferedReader(new FileReader("src/resources/stop.txt"));
+			br = new BufferedReader(new FileReader("src/resources/dataset.csv"));
 			String line;
 			while ((line = br.readLine()) != null) {
 				if (line.equals(",,"))
@@ -292,7 +293,6 @@ public class dataReader {
 	private static void setToken() {
 		documents.findFirst();
 		tokens = 0;
-
 		
 		for (int i = 0; i < documents.length(); i++) {// d
 			 
@@ -301,26 +301,4 @@ public class dataReader {
 
 		}
 	}
-	
-	private static void setVocab() {
-		LinkedList<String> tmp = new LinkedList<>();
-
-		documents.findFirst();
-
-		for (int i = 0; i < documents.length(); i++) {// d
-			documents.retrieve().findFirst();
-			for (int j = 0; j < documents.retrieve().length(); j++) {// s
-
-				if(!tmp.findKey(documents.retrieve().retrieve()))
-					tmp.insert(documents.retrieve().retrieve());
-				
-				documents.retrieve().findNext();
-
-			}
-			documents.findNext();
-
-		}
-		vocab = tmp.length();
-	}
-
 }
