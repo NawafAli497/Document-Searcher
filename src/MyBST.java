@@ -1,7 +1,7 @@
 
 
 public class MyBST<T> {
-    MyBSTNode<T> root, current;
+    private MyBSTNode<T> root, current;
 	
 	/** Creates a new instance of BST */
 	public MyBST() {
