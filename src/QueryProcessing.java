@@ -9,7 +9,6 @@ public class QueryProcessing {
 		Scanner keyboard = new Scanner(System.in);
 		String exp = keyboard.nextLine();
 
-
 		if (choice == 1) {
 			LinkedList<Integer> test = evalExpIndex(exp);
 
@@ -65,14 +64,14 @@ public class QueryProcessing {
 
 		String[] token = expression.toLowerCase().split("\\s+");
 
-		for (int i = 0; i < token.length; i++) {//O(Q)
+		for (int i = 0; i < token.length; i++) {// O(Q)
 			if (!token[i].equals("and") && !token[i].equals("or")) {
-				if (dataReader.invertedIndexHash.get(token[i]) == null) //O(1)
+				if (dataReader.invertedIndexHash.get(token[i]) == null) // O(1)
 					return null;
-				valStk.push(dataReader.invertedIndexHash.get(token[i]).data); //O(1)
+				valStk.push(dataReader.invertedIndexHash.get(token[i]).data); // O(1)
 			} else {
 				repeatOpsHash(token[i], valStk, opStk);// since the max number of ops is 2 in the stack then O(Q(n1+n2))
-				opStk.push(token[i]);//O(1)
+				opStk.push(token[i]);// O(1)
 			}
 		}
 		repeatOpsHash("$", valStk, opStk);// O(Q(n1+n2))
@@ -80,7 +79,7 @@ public class QueryProcessing {
 		return valStk.pop();
 	}
 
-	private void doOpHash(LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { //(O(n1+n2)
+	private void doOpHash(LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { // (O(n1+n2)
 		LinkedList<Pair> x = valStk.pop(); // n1
 		LinkedList<Pair> y = valStk.pop(); // n2
 		LinkedList<Pair> result = new LinkedList<>();
@@ -89,40 +88,43 @@ public class QueryProcessing {
 
 		if (tmpOp.equals("and")) {
 			x.findFirst();
-			for (int i = 0; i < x.length(); i++) { //O(n1)
-				tmp.put(x.retrieve().id, true); //O(1)
+			for (int i = 0; i < x.length(); i++) { // O(n1)
+				tmp.put(x.retrieve().id, true); // O(1)
 				x.findNext();
 			}
 
 			y.findFirst();
-			for (int i = 0; i < y.length(); i++) { //O(n2)
+			for (int i = 0; i < y.length(); i++) { // O(n2)
 				if (tmp.get(y.retrieve().id) != null) // O(1)
-					result.insert(y.retrieve()); //O(1)
+					result.insert(y.retrieve()); // O(1)
 				y.findNext();
 			}
 		} else {
 
 			x.findFirst();
-			for (int i = 0; i < x.length(); i++) { //O(n1)
-				result.insert(x.retrieve());//O(1)
-				tmp.put(x.retrieve().id, true);//O(1)
+			for (int i = 0; i < x.length(); i++) { // O(n1)
+				result.insert(x.retrieve());// O(1)
+				tmp.put(x.retrieve().id, true);// O(1)
 				x.findNext();
 			}
 
 			y.findFirst();
-			for (int i = 0; i < y.length(); i++) { //O(n2)
-				if (tmp.get(y.retrieve().id) == null) //O(1)
-					result.insert(y.retrieve());//O(1)
+			for (int i = 0; i < y.length(); i++) { // O(n2)
+				if (tmp.get(y.retrieve().id) == null) // O(1)
+					result.insert(y.retrieve());// O(1)
 				y.findNext();
 			}
 
 		}
-		valStk.push(result); //O(1)
+		valStk.push(result); // O(1)
 	}
 
-	private void repeatOpsHash(String refOp, LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { // O(V(n1+n2)) where V is the size of the valStack
-		while (valStk.size() > 1 && precedence(refOp) <= precedence(op.peek())) { //O(V)
-			doOpHash(valStk, op); //O(n1+n2)
+	private void repeatOpsHash(String refOp, LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { // O(V(n1+n2))
+																										// where V is
+																										// the size of
+																										// the valStack
+		while (valStk.size() > 1 && precedence(refOp) <= precedence(op.peek())) { // O(V)
+			doOpHash(valStk, op); // O(n1+n2)
 		}
 	}
 
@@ -135,13 +137,14 @@ public class QueryProcessing {
 		LinkedStack<LinkedListobj> valStk = new LinkedStack<>();
 		valStk = new LinkedStack<>();
 
-		String[] token = expression.toLowerCase().split("\\s+"); 
+		String[] token = expression.toLowerCase().split("\\s+");
 
-		for (int i = 0; i < token.length; i++) { //O(Q)
+		for (int i = 0; i < token.length; i++) { // O(Q)
 			if (!token[i].equals("and") && !token[i].equals("or")) {
-				if (!dataReader.BSTinverted_index.findkey(token[i])) //O(log U)  where U is the number of unique words in BST inverted index
+				if (!dataReader.BSTinverted_index.findkey(token[i])) // O(log U) where U is the number of unique words
+																		// in BST inverted index
 					return null;
-				valStk.push(dataReader.BSTinverted_index.retrieve()); //O(1)
+				valStk.push(dataReader.BSTinverted_index.retrieve()); // O(1)
 			} else {
 				repeatOpsLinkedAndBST(token[i], valStk, opStk);
 				opStk.push(token[i]);
@@ -151,7 +154,6 @@ public class QueryProcessing {
 
 		return valStk.pop().data;
 	}
-
 
 	/////////// LinkedList/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -174,7 +176,6 @@ public class QueryProcessing {
 			}
 		}
 		repeatOpsLinkedAndBST("$", valStk, opStk);// O(S(n1+n2))
-
 
 		return valStk.pop().data;
 	}
@@ -229,26 +230,25 @@ public class QueryProcessing {
 
 		String[] token = expression.toLowerCase().split("\\s+");
 
-		for (int i = 0; i < token.length; i++) {// O(s)
+		for (int i = 0; i < token.length; i++) {// O(Q)
 			if (!token[i].equals("and") && !token[i].equals("or")) {
-				LinkedList<Integer> tmp = makeAList(token[i]);
+				LinkedList<Integer> tmp = makeAList(token[i]);// O(D*S*L)
 				if (tmp.length() == 0)
 					return null;
 				valStk.push(tmp);
 			} else {
-				repeatOpsindex(token[i], valStk, opStk);// O(S(n1+n2))
+				repeatOpsindex(token[i], valStk, opStk);// O(S)
 				opStk.push(token[i]);
 			}
 		}
-		repeatOpsindex("$", valStk, opStk);// O(S(n1+n2))
-
+		repeatOpsindex("$", valStk, opStk);// O(V(n1*n2))
 
 		return valStk.pop();
 	}
 
-	private void doOpindex(LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {
-		LinkedList<Integer> x = valStk.pop();
-		LinkedList<Integer> y = valStk.pop();
+	private void doOpindex(LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {// O(V(n1*n2))
+		LinkedList<Integer> x = valStk.pop();// n1
+		LinkedList<Integer> y = valStk.pop();// n2
 		LinkedList<Integer> result = new LinkedList<Integer>();
 		String tmpOp = op.pop();
 
@@ -279,7 +279,7 @@ public class QueryProcessing {
 		valStk.push(result);
 	}
 
-	private void repeatOpsindex(String refOp, LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {// O(s)
+	private void repeatOpsindex(String refOp, LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {// O(V(n1*n2))
 		while (valStk.size() > 1 && precedence(refOp) <= precedence(op.peek())) {
 			doOpindex(valStk, op);
 		}
@@ -289,13 +289,16 @@ public class QueryProcessing {
 		LinkedList<Integer> list = new LinkedList<>();
 		dataReader.documents.findFirst();
 
-		for (int i = 0; i < dataReader.documents.length(); i++) {
+		for (int i = 0; i < dataReader.documents.length(); i++) {// O(D*S*L)
 
 			dataReader.documents.retrieve().findFirst();
 			for (int j = 0; j < dataReader.documents.retrieve().length(); j++) {
 
-				if (!list.findKey(i) && dataReader.documents.retrieve().retrieve().equals(word)) {
-					list.insert(i);
+				if (dataReader.documents.retrieve().retrieve().equals(word)) {
+					if (list.length() == 0)
+						list.insert(i);
+					else if (list.retrieve() != i)
+						list.insert(i);
 				}
 				dataReader.documents.retrieve().findNext();
 			}
