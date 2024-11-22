@@ -57,7 +57,7 @@ public class QueryProcessing {
 
 	}
 
-	public static LinkedList<Pair> evalExpHash(String expression) {
+	private LinkedList<Pair> evalExpHash(String expression) {
 
 		LinkedStack<String> opStk = new LinkedStack<>();
 		LinkedStack<LinkedList<Pair>> valStk = new LinkedStack<>();
@@ -80,7 +80,7 @@ public class QueryProcessing {
 		return valStk.pop();
 	}
 
-	private static void doOpHash(LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { //(O(n1+n2)
+	private void doOpHash(LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { //(O(n1+n2)
 		LinkedList<Pair> x = valStk.pop(); // n1
 		LinkedList<Pair> y = valStk.pop(); // n2
 		LinkedList<Pair> result = new LinkedList<>();
@@ -120,7 +120,7 @@ public class QueryProcessing {
 		valStk.push(result); //O(1)
 	}
 
-	private static void repeatOpsHash(String refOp, LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { // O(V(n1+n2)) where V is the size of the valStack
+	private void repeatOpsHash(String refOp, LinkedStack<LinkedList<Pair>> valStk, Stack<String> op) { // O(V(n1+n2)) where V is the size of the valStack
 		while (valStk.size() > 1 && precedence(refOp) <= precedence(op.peek())) { //O(V)
 			doOpHash(valStk, op); //O(n1+n2)
 		}
@@ -129,7 +129,7 @@ public class QueryProcessing {
 	////////////////////////// BST
 	////////////////////////// ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static LinkedList<Pair> evalExpBST(String expression) {
+	private LinkedList<Pair> evalExpBST(String expression) {
 
 		LinkedStack<String> opStk = new LinkedStack<>();
 		LinkedStack<LinkedListobj> valStk = new LinkedStack<>();
@@ -152,43 +152,10 @@ public class QueryProcessing {
 		return valStk.pop().data;
 	}
 
-	private static void doOpBST(LinkedStack<LinkedListobj> valStk, Stack<String> op) {
-		LinkedListobj x = valStk.pop();
-		LinkedList<Pair> y = valStk.pop().data;
-		LinkedListobj result = new LinkedListobj();
-		String tmpOp = op.pop();
-
-		if (tmpOp.equals("and")) {
-
-			y.findFirst();
-			for (int i = 0; i < y.length(); i++) {
-				if (x.findDoc(y.retrieve().id))
-					result.data.insert(y.retrieve());
-				y.findNext();
-			}
-		} else {
-
-			x.data.findFirst();
-			for (int i = 0; i < x.data.length(); i++) {
-				result.data.insert(x.data.retrieve());
-				x.data.findNext();
-			}
-
-			y.findFirst();
-			for (int i = 0; i < y.length(); i++) {
-				if (!x.findDoc(y.retrieve().id))
-					result.data.insert(y.retrieve());
-				y.findNext();
-			}
-
-		}
-		valStk.push(result);
-	}
-
 
 	/////////// LinkedList/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static LinkedList<Pair> evalExpLinked(String expression) {
+	private LinkedList<Pair> evalExpLinked(String expression) {
 
 		LinkedStack<String> opStk = new LinkedStack<>();// Stack for operators
 		LinkedStack<LinkedListobj> valStk = new LinkedStack<>();
@@ -212,7 +179,7 @@ public class QueryProcessing {
 		return valStk.pop().data;
 	}
 
-	private static void doOpLinked(LinkedStack<LinkedListobj> valStk, Stack<String> op) {
+	private void doOpLinkedAndBST(LinkedStack<LinkedListobj> valStk, Stack<String> op) {
 		LinkedListobj x = valStk.pop();
 		LinkedList<Pair> y = valStk.pop().data;
 		LinkedListobj result = new LinkedListobj();
@@ -245,16 +212,16 @@ public class QueryProcessing {
 		valStk.push(result);
 	}
 
-	private static void repeatOpsLinkedAndBST(String refOp, LinkedStack<LinkedListobj> valStk, Stack<String> op) {// O(s)
+	private void repeatOpsLinkedAndBST(String refOp, LinkedStack<LinkedListobj> valStk, Stack<String> op) {// O(s)
 		while (valStk.size() > 1 && precedence(refOp) <= precedence(op.peek())) {
-			doOpLinked(valStk, op);
+			doOpLinkedAndBST(valStk, op);
 		}
 	}
 
 	///////////////// index
 	///////////////// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static LinkedList<Integer> evalExpIndex(String expression) {
+	private LinkedList<Integer> evalExpIndex(String expression) {
 
 		LinkedStack<String> opStk = new LinkedStack<>();// Stack for operators
 		LinkedStack<LinkedList<Integer>> valStk = new LinkedStack<>();
@@ -279,7 +246,7 @@ public class QueryProcessing {
 		return valStk.pop();
 	}
 
-	private static void doOpindex(LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {
+	private void doOpindex(LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {
 		LinkedList<Integer> x = valStk.pop();
 		LinkedList<Integer> y = valStk.pop();
 		LinkedList<Integer> result = new LinkedList<Integer>();
@@ -312,13 +279,13 @@ public class QueryProcessing {
 		valStk.push(result);
 	}
 
-	private static void repeatOpsindex(String refOp, LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {// O(s)
+	private void repeatOpsindex(String refOp, LinkedStack<LinkedList<Integer>> valStk, Stack<String> op) {// O(s)
 		while (valStk.size() > 1 && precedence(refOp) <= precedence(op.peek())) {
 			doOpindex(valStk, op);
 		}
 	}
 
-	private static LinkedList<Integer> makeAList(String word) {
+	private LinkedList<Integer> makeAList(String word) {
 		LinkedList<Integer> list = new LinkedList<>();
 		dataReader.documents.findFirst();
 
@@ -339,7 +306,7 @@ public class QueryProcessing {
 
 	}
 
-	private static int precedence(String op) {
+	private int precedence(String op) {
 		switch (op) {
 		case "$":
 			return 0;
