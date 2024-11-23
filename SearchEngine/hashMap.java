@@ -8,7 +8,7 @@ public class hashMap<K, V> {
 		buckets = new hashMapPair[this.capacity];
 	}
 
-	private Integer hash(K key) {
+	private int hash(K key) {
 		return Math.abs(key.hashCode()) % capacity;
 	}
 
