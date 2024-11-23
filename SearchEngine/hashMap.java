@@ -5,7 +5,6 @@ public class hashMap<K, V> {
 
 	public hashMap(int capacity) {
 		this.capacity = (int) (capacity/loadFactor);
-		numberOfInserts = 0;
 		buckets = new hashMapPair[this.capacity];
 	}
 
