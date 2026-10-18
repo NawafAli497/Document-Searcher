@@ -2,15 +2,13 @@ public class hashMap<K, V> {
 	private final double loadFactor = 0.7;
 	private hashMapPair<K, V>[] buckets;
 	private int capacity;
-	private int numberOfInserts;
 
-	public hashMap(Integer capacity) {
+	public hashMap(int capacity) {
 		this.capacity = (int) (capacity/loadFactor);
-		numberOfInserts = 0;
 		buckets = new hashMapPair[this.capacity];
 	}
 
-	private Integer hash(K key) {
+	private int hash(K key) {
 		return Math.abs(key.hashCode()) % capacity;
 	}
 
